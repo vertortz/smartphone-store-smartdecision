@@ -34,10 +34,10 @@ public class DecisionSystem {
     }
 
     public String checkPromotionEligibility(double purchase, boolean loyaltyMember) {
-        if (purchase >= 50000 || loyaltyMember) {
+        if (purchase >= 300000 || loyaltyMember) {
             return "Покупатель получает предложение программы лояльности.";
         }
-        return "Для специального предложения нужна покупка от 50 000 руб. или карта лояльности.";
+        return "Для специального предложения нужна покупка от 300 000 ₸ или карта лояльности.";
     }
 
     public String checkAccountAccess(boolean blocked) {
@@ -49,15 +49,15 @@ public class DecisionSystem {
 
     public String calculateDiscount(double purchase, boolean loyaltyMember) {
         double discountRate;
-        if (purchase >= 100000) {
+        if (purchase >= 600000) {
             discountRate = loyaltyMember ? 0.15 : 0.10;
-        } else if (purchase >= 50000) {
+        } else if (purchase >= 300000) {
             discountRate = loyaltyMember ? 0.10 : 0.05;
         } else {
             discountRate = loyaltyMember ? 0.05 : 0;
         }
         double discount = purchase * discountRate;
-        return String.format("Скидка: %.0f%% (%.2f руб.). К оплате: %.2f руб.",
+        return String.format("Скидка: %.0f%% (%.2f ₸). К оплате: %.2f ₸.",
                 discountRate * 100, discount, purchase - discount);
     }
 
@@ -71,7 +71,7 @@ public class DecisionSystem {
         } else {
             status = "устойчивое финансовое состояние";
         }
-        return String.format("Доходы: %.2f руб.; расходы: %.2f руб.; остаток: %.2f руб. Статус: %s.",
+        return String.format("Доходы: %.2f ₸; расходы: %.2f ₸; остаток: %.2f ₸. Статус: %s.",
                 income, expenses, balance, status);
     }
 
@@ -95,7 +95,7 @@ public class DecisionSystem {
         if (suspiciousLocation) {
             risk += 3;
         }
-        if (purchaseAmount > 150000) {
+        if (purchaseAmount > 900000) {
             risk += 2;
         }
         String level = risk >= 7 ? "высокий" : risk >= 4 ? "средний" : "низкий";
@@ -105,9 +105,9 @@ public class DecisionSystem {
     public String recommendSmartphone(int age, double budget, int storageGb,
                                      int batteryHours, int cameraMp, boolean gaming) {
         int score = 0;
-        if (budget >= 100000) {
+        if (budget >= 600000) {
             score += 2;
-        } else if (budget >= 50000) {
+        } else if (budget >= 300000) {
             score++;
         }
         if (storageGb >= 256) {
@@ -127,7 +127,7 @@ public class DecisionSystem {
         String recommendation;
         if (age < 18) {
             recommendation = "доступный смартфон с родительской помощью при оформлении";
-        } else if (budget >= 100000) {
+        } else if (budget >= 600000) {
             if (gaming && storageGb >= 256) {
                 recommendation = "флагман с мощным процессором и памятью от 256 ГБ";
             } else if (cameraMp >= 50) {
@@ -135,7 +135,7 @@ public class DecisionSystem {
             } else {
                 recommendation = "флагман с расширенной гарантией";
             }
-        } else if (budget >= 50000) {
+        } else if (budget >= 300000) {
             recommendation = gaming
                     ? "производительная модель среднего класса"
                     : "сбалансированная модель с хорошей камерой";
@@ -152,20 +152,20 @@ public class DecisionSystem {
         switch (tariffChoice) {
             case 1 -> {
                 tariff = "Базовый";
-                dailyPrice = 500;
+                dailyPrice = 3000;
             }
             case 2 -> {
                 tariff = "Комфорт";
-                dailyPrice = 1200;
+                dailyPrice = 7200;
             }
             case 3 -> {
                 tariff = "Премиум";
-                dailyPrice = 2500;
+                dailyPrice = 15000;
             }
             default -> throw new IllegalArgumentException("Неизвестный тариф.");
         }
-        double total = dailyPrice * days + (urgent ? 1000 : 0);
-        return String.format("Тариф «%s», срок %d дн., срочность: %s. Стоимость: %.2f руб.",
+        double total = dailyPrice * days + (urgent ? 6000 : 0);
+        return String.format("Тариф «%s», срок %d дн., срочность: %s. Стоимость: %.2f ₸.",
                 tariff, days, urgent ? "да" : "нет", total);
     }
 
@@ -191,7 +191,7 @@ public class DecisionSystem {
 
     public String evaluateCustomerChoice() {
         int age = validation.readInt("Возраст: ", 1, 120);
-        double budget = validation.readDouble("Бюджет (руб.): ", 0, 10000000);
+        double budget = validation.readDouble("Бюджет (₸): ", 0, 10000000);
         int storage = validation.readInt("Желаемая память (ГБ, 32–2048): ", 32, 2048);
         int battery = validation.readInt("Важная автономность (часов, 1–48): ", 1, 48);
         int camera = validation.readInt("Минимальное разрешение камеры (Мп, 1–300): ", 1, 300);

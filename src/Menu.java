@@ -90,7 +90,7 @@ public class Menu {
     }
 
     private void calculateDiscount() {
-        double amount = validation.readDouble("Сумма покупки (руб.): ", 0, 10000000);
+        double amount = validation.readDouble("Сумма покупки (₸): ", 0, 10000000);
         boolean loyalty = validation.readYesNo("Есть карта лояльности?");
         String result = decisionSystem.calculateDiscount(amount, loyalty);
         System.out.println(result);
@@ -99,7 +99,7 @@ public class Menu {
         int age = validation.readInt("Возраст покупателя: ", 1, 120);
         boolean active = validation.readYesNo("Аккаунт активен?");
         boolean blocked = validation.readYesNo("Аккаунт заблокирован?");
-        double budget = validation.readDouble("Бюджет покупателя (руб.): ", 0, 10000000);
+        double budget = validation.readDouble("Бюджет покупателя (₸): ", 0, 10000000);
         String decision = decisionSystem.analyzePurchase(age, budget, active, blocked, amount, loyalty);
         System.out.println("Решение по покупке: " + decision);
         report.add("Расчёт покупки", result + System.lineSeparator()
@@ -108,8 +108,8 @@ public class Menu {
     }
 
     private void checkFinances() {
-        double income = validation.readDouble("Ежемесячный доход (руб.): ", 0, 100000000);
-        double expenses = validation.readDouble("Ежемесячные расходы (руб.): ", 0, 100000000);
+        double income = validation.readDouble("Ежемесячный доход (₸): ", 0, 100000000);
+        double expenses = validation.readDouble("Ежемесячные расходы (₸): ", 0, 100000000);
         String result = decisionSystem.assessFinances(income, expenses);
         System.out.println(result);
         report.add("Финансовый анализ", result);
@@ -138,11 +138,11 @@ public class Menu {
     }
 
     private void calculateService() {
-        System.out.println("Тарифы: 1 — Базовый (500 руб./день), "
-                + "2 — Комфорт (1 200 руб./день), 3 — Премиум (2 500 руб./день).");
+        System.out.println("Тарифы: 1 — Базовый (3 000 ₸/день), "
+                + "2 — Комфорт (7 200 ₸/день), 3 — Премиум (15 000 ₸/день).");
         int tariff = validation.readInt("Выберите тариф: ", 1, 3);
         int days = validation.readInt("Срок обслуживания (дней): ", 1, 365);
-        boolean urgent = validation.readYesNo("Нужное срочное обслуживание (+1 000 руб.)?");
+        boolean urgent = validation.readYesNo("Нужное срочное обслуживание (+6 000 ₸)?");
         String result = decisionSystem.calculateServicePrice(tariff, days, urgent);
         System.out.println(result);
         report.add("Расчёт сервисной услуги", result);
@@ -152,7 +152,7 @@ public class Menu {
         int failedAttempts = validation.readInt("Неудачные попытки входа (0–10): ", 0, 10);
         boolean newDevice = validation.readYesNo("Вход с нового устройства?");
         boolean suspiciousLocation = validation.readYesNo("Подозрительное местоположение?");
-        double amount = validation.readDouble("Сумма заказа (руб.): ", 0, 10000000);
+        double amount = validation.readDouble("Сумма заказа (₸): ", 0, 10000000);
         String result = decisionSystem.assessSecurityRisk(
                 failedAttempts, newDevice, suspiciousLocation, amount);
         System.out.println(result);

@@ -1,12 +1,12 @@
 const products = [
-  { brand: "SMARTSPACE SELECT", name: "Nova Pro 256", price: 119990, category: "flagship", badge: "Хит", art: "art-lilac", phone: "", storage: "256 ГБ", camera: "50 Мп", battery: "18 ч" },
-  { brand: "SMARTSPACE SELECT", name: "Nova Air", price: 74990, category: "middle", badge: "Новинка", art: "art-mint", phone: "phone-green", storage: "256 ГБ", camera: "50 Мп", battery: "16 ч" },
-  { brand: "SMARTSPACE SELECT", name: "Pixel Studio X", price: 149990, category: "flagship", badge: "Премиум", art: "art-peach", phone: "phone-orange", storage: "512 ГБ", camera: "108 Мп", battery: "20 ч" },
-  { brand: "SMARTSPACE SELECT", name: "One Mini", price: 39990, category: "budget", badge: "Выгодно", art: "art-blue", phone: "phone-blue", storage: "128 ГБ", camera: "48 Мп", battery: "14 ч" },
-  { brand: "SMARTSPACE SELECT", name: "Nova Play", price: 89990, category: "middle", badge: "Для игр", art: "art-rose", phone: "phone-pink", storage: "512 ГБ", camera: "64 Мп", battery: "19 ч" },
-  { brand: "SMARTSPACE SELECT", name: "One Lite", price: 27990, category: "budget", badge: "Доступный", art: "art-mint", phone: "phone-green", storage: "128 ГБ", camera: "32 Мп", battery: "12 ч" },
-  { brand: "SMARTSPACE SELECT", name: "Nova Ultra", price: 179990, category: "flagship", badge: "Флагман", art: "art-blue", phone: "phone-blue", storage: "512 ГБ", camera: "108 Мп", battery: "22 ч" },
-  { brand: "SMARTSPACE SELECT", name: "One Core", price: 49990, category: "budget", badge: "Выбор дня", art: "art-peach", phone: "phone-orange", storage: "256 ГБ", camera: "50 Мп", battery: "15 ч" }
+  { brand: "SMARTSPACE SELECT", name: "Nova Pro 256", price: 719990, category: "flagship", badge: "Хит", art: "art-lilac", phone: "", storage: "256 ГБ", camera: "50 Мп", battery: "18 ч" },
+  { brand: "SMARTSPACE SELECT", name: "Nova Air", price: 449990, category: "middle", badge: "Новинка", art: "art-mint", phone: "phone-green", storage: "256 ГБ", camera: "50 Мп", battery: "16 ч" },
+  { brand: "SMARTSPACE SELECT", name: "Pixel Studio X", price: 899990, category: "flagship", badge: "Премиум", art: "art-peach", phone: "phone-orange", storage: "512 ГБ", camera: "108 Мп", battery: "20 ч" },
+  { brand: "SMARTSPACE SELECT", name: "One Mini", price: 239990, category: "budget", badge: "Выгодно", art: "art-blue", phone: "phone-blue", storage: "128 ГБ", camera: "48 Мп", battery: "14 ч" },
+  { brand: "SMARTSPACE SELECT", name: "Nova Play", price: 539990, category: "middle", badge: "Для игр", art: "art-rose", phone: "phone-pink", storage: "512 ГБ", camera: "64 Мп", battery: "19 ч" },
+  { brand: "SMARTSPACE SELECT", name: "One Lite", price: 169990, category: "budget", badge: "Доступный", art: "art-mint", phone: "phone-green", storage: "128 ГБ", camera: "32 Мп", battery: "12 ч" },
+  { brand: "SMARTSPACE SELECT", name: "Nova Ultra", price: 1079990, category: "flagship", badge: "Флагман", art: "art-blue", phone: "phone-blue", storage: "512 ГБ", camera: "108 Мп", battery: "22 ч" },
+  { brand: "SMARTSPACE SELECT", name: "One Core", price: 299990, category: "budget", badge: "Выбор дня", art: "art-peach", phone: "phone-orange", storage: "256 ГБ", camera: "50 Мп", battery: "15 ч" }
 ];
 
 const reportEntries = [];
@@ -22,7 +22,7 @@ const viewTitles = {
   report: "Мой отчёт"
 };
 const numberFormat = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
-const rubles = (value) => `${numberFormat.format(value)} ₽`;
+const tenge = (value) => `${numberFormat.format(value)} ₸`;
 const one = (selector, root = document) => root.querySelector(selector);
 const all = (selector, root = document) => [...root.querySelectorAll(selector)];
 
@@ -116,7 +116,7 @@ function phoneCard(product) {
   bottom.className = "product-bottom";
   const price = document.createElement("span");
   price.className = "product-price";
-  price.textContent = rubles(product.price);
+  price.textContent = tenge(product.price);
   const buy = document.createElement("button");
   buy.className = "product-buy";
   buy.type = "button";
@@ -143,11 +143,11 @@ function renderProducts() {
 
 function calculateDiscount(amount, loyalty) {
   let rate = 0;
-  if (amount >= 100000) rate = loyalty ? 0.15 : 0.1;
-  else if (amount >= 50000) rate = loyalty ? 0.1 : 0.05;
+  if (amount >= 600000) rate = loyalty ? 0.15 : 0.1;
+  else if (amount >= 300000) rate = loyalty ? 0.1 : 0.05;
   else if (loyalty) rate = 0.05;
   const discount = amount * rate;
-  return `Скидка: ${rate * 100}% (${rubles(discount)}). К оплате: ${rubles(amount - discount)}.`;
+  return `Скидка: ${rate * 100}% (${tenge(discount)}). К оплате: ${tenge(amount - discount)}.`;
 }
 
 function assessProductScore(score) {
@@ -159,8 +159,8 @@ function assessProductScore(score) {
 
 function getRecommendation(age, budget, storage, battery, camera, gaming) {
   let score = 0;
-  if (budget >= 100000) score += 2;
-  else if (budget >= 50000) score++;
+  if (budget >= 600000) score += 2;
+  else if (budget >= 300000) score++;
   if (storage >= 256) score++;
   if (battery >= 12) score++;
   if (camera >= 50) score++;
@@ -168,11 +168,11 @@ function getRecommendation(age, budget, storage, battery, camera, gaming) {
   const level = score >= 5 ? "высокий" : score >= 3 ? "средний" : "базовый";
   let recommendation;
   if (age < 18) recommendation = "доступный смартфон с участием взрослого при оформлении";
-  else if (budget >= 100000 && gaming && storage >= 256) recommendation = "флагман для игр с памятью от 256 ГБ";
-  else if (budget >= 100000 && camera >= 50) recommendation = "флагман с продвинутой камерой";
-  else if (budget >= 100000) recommendation = "флагман с расширенной гарантией";
-  else if (budget >= 50000 && gaming) recommendation = "производительная модель среднего класса";
-  else if (budget >= 50000) recommendation = "сбалансированная модель с хорошей камерой";
+  else if (budget >= 600000 && gaming && storage >= 256) recommendation = "флагман для игр с памятью от 256 ГБ";
+  else if (budget >= 600000 && camera >= 50) recommendation = "флагман с продвинутой камерой";
+  else if (budget >= 600000) recommendation = "флагман с расширенной гарантией";
+  else if (budget >= 300000 && gaming) recommendation = "производительная модель среднего класса";
+  else if (budget >= 300000) recommendation = "сбалансированная модель с хорошей камерой";
   else recommendation = "надёжная базовая модель в пределах бюджета";
   return `Итоговый уровень: ${level} (${score} баллов из 6).\nРекомендация: ${recommendation}.`;
 }
@@ -201,9 +201,9 @@ one("#purchase-form").addEventListener("submit", (event) => {
   const active = field(form, "active").checked;
   const blocked = field(form, "blocked").checked;
   const discount = calculateDiscount(amount, loyalty);
-  const promotion = amount >= 50000 || loyalty
+  const promotion = amount >= 300000 || loyalty
     ? "Доступно специальное предложение программы лояльности."
-    : "Для специального предложения нужна покупка от 50 000 ₽ или карта лояльности.";
+    : "Для специального предложения нужна покупка от 300 000 ₸ или карта лояльности.";
   let decision;
   let tone = "success";
   if (blocked) {
@@ -254,13 +254,13 @@ one("#score-form").addEventListener("submit", (event) => {
 one("#service-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const form = event.currentTarget;
-  const tariffPrices = { 1: 500, 2: 1200, 3: 2500 };
+  const tariffPrices = { 1: 3000, 2: 7200, 3: 15000 };
   const tariffNames = { 1: "Базовый", 2: "Комфорт", 3: "Премиум" };
   const tariff = field(form, "tariff").value;
   const days = Number(field(form, "days").value);
   const urgent = field(form, "urgent").checked;
-  const total = tariffPrices[tariff] * days + (urgent ? 1000 : 0);
-  const result = `Тариф «${tariffNames[tariff]}», срок ${days} дн., срочность: ${urgent ? "да" : "нет"}.\nСтоимость: ${rubles(total)}.`;
+  const total = tariffPrices[tariff] * days + (urgent ? 6000 : 0);
+  const result = `Тариф «${tariffNames[tariff]}», срок ${days} дн., срочность: ${urgent ? "да" : "нет"}.\nСтоимость: ${tenge(total)}.`;
   showResult("#service-result", result);
   addReport("Расчёт сервисной услуги", result);
 });
@@ -335,7 +335,7 @@ one("#security-form").addEventListener("submit", (event) => {
   let risk = attempts * 2;
   if (newDevice) risk += 2;
   if (suspiciousLocation) risk += 3;
-  if (amount > 150000) risk += 2;
+  if (amount > 900000) risk += 2;
   const level = risk >= 7 ? "высокий" : risk >= 4 ? "средний" : "низкий";
   const result = `Уровень риска: ${level} (${risk} баллов).\nУчтено: неудачные попытки входа, новое устройство, местоположение и сумма заказа.`;
   showResult("#security-result", result, risk >= 7 ? "danger" : risk >= 4 ? "warning" : "success");

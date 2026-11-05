@@ -99,19 +99,19 @@
         <div class="content-grid">
           <form class="panel form-panel" id="purchase-form">
             <div class="panel-heading"><span class="panel-icon purple-icon">％</span><div><h2>Расчёт покупки</h2><p>Сумма и участие в программе лояльности определяют скидку.</p></div></div>
-            <label>Сумма покупки, ₽<input name="amount" type="number" min="0" max="10000000" step="100" placeholder="Например, 79 990" required></label>
+            <label>Сумма покупки, ₸<input name="amount" type="number" min="0" max="10000000" step="1000" placeholder="Например, 479 990" required></label>
             <label class="check-row"><input name="loyalty" type="checkbox"><span>У меня есть карта лояльности</span></label>
             <div class="form-divider"></div>
             <div class="form-subtitle">Проверка условий покупки</div>
-            <div class="two-fields"><label>Возраст<input name="age" type="number" min="1" max="120" value="25" required></label><label>Ваш бюджет, ₽<input name="budget" type="number" min="0" max="10000000" value="100000" required></label></div>
+            <div class="two-fields"><label>Возраст<input name="age" type="number" min="1" max="120" value="25" required></label><label>Ваш бюджет, ₸<input name="budget" type="number" min="0" max="10000000" value="600000" required></label></div>
             <label class="check-row"><input name="active" type="checkbox" checked><span>Аккаунт активен</span></label>
             <label class="check-row"><input name="blocked" type="checkbox"><span>Аккаунт заблокирован</span></label>
             <button class="button button-primary form-submit" type="submit">Рассчитать покупку <span>→</span></button>
             <div class="result-box" id="purchase-result" aria-live="polite" hidden></div>
           </form>
           <aside class="side-stack">
-            <div class="panel discount-panel"><div class="discount-label">ТВОЯ ПРОГРАММА ЛОЯЛЬНОСТИ</div><div class="discount-big">до 15<span>%</span></div><p>Скидка на покупку от 100 000 ₽ с картой лояльности.</p><div class="discount-line"></div><div class="discount-steps"><span>до 50 тыс. <b>до 5%</b></span><span>от 50 тыс. <b>до 10%</b></span><span>от 100 тыс. <b>до 15%</b></span></div></div>
-            <div class="tip-card"><span class="tip-icon">i</span><div><strong>Специальное предложение</strong><p>Доступно при покупке от 50 000 ₽ <b>или</b> с картой лояльности.</p></div></div>
+            <div class="panel discount-panel"><div class="discount-label">ТВОЯ ПРОГРАММА ЛОЯЛЬНОСТИ</div><div class="discount-big">до 15<span>%</span></div><p>Скидка на покупку от 600 000 ₸ с картой лояльности.</p><div class="discount-line"></div><div class="discount-steps"><span>до 300 тыс. <b>до 5%</b></span><span>от 300 тыс. <b>до 10%</b></span><span>от 600 тыс. <b>до 15%</b></span></div></div>
+            <div class="tip-card"><span class="tip-icon">i</span><div><strong>Специальное предложение</strong><p>Доступно при покупке от 300 000 ₸ <b>или</b> с картой лояльности.</p></div></div>
           </aside>
         </div>
       </section>
@@ -121,7 +121,7 @@
         <div class="content-grid">
           <form class="panel form-panel" id="recommend-form">
             <div class="panel-heading"><span class="panel-icon mint-icon">✳</span><div><h2>Что для тебя важно?</h2><p>Подбор учитывает бюджет, характеристики и возраст.</p></div></div>
-            <div class="two-fields"><label>Возраст<input name="age" type="number" min="1" max="120" value="25" required></label><label>Бюджет, ₽<input name="budget" type="number" min="0" max="10000000" value="80000" required></label></div>
+            <div class="two-fields"><label>Возраст<input name="age" type="number" min="1" max="120" value="25" required></label><label>Бюджет, ₸<input name="budget" type="number" min="0" max="10000000" value="480000" required></label></div>
             <label>Память, ГБ<select name="storage"><option value="64">64 ГБ</option><option value="128">128 ГБ</option><option value="256" selected>256 ГБ</option><option value="512">512 ГБ</option></select></label>
             <div class="two-fields"><label>Автономность, часов<input name="battery" type="number" min="1" max="48" value="12" required></label><label>Камера, Мп<input name="camera" type="number" min="1" max="300" value="50" required></label></div>
             <label class="check-row"><input name="gaming" type="checkbox"><span>Планирую играть на смартфоне</span></label>
@@ -138,9 +138,9 @@
         <div class="content-grid">
           <form class="panel form-panel" id="service-form">
             <div class="panel-heading"><span class="panel-icon peach-icon">◈</span><div><h2>Калькулятор услуг</h2><p>Выбери тариф и срок обслуживания.</p></div></div>
-            <label>Тариф<select name="tariff"><option value="1">Базовый — 500 ₽ / день</option><option value="2">Комфорт — 1 200 ₽ / день</option><option value="3">Премиум — 2 500 ₽ / день</option></select></label>
+            <label>Тариф<select name="tariff"><option value="1">Базовый — 3 000 ₸ / день</option><option value="2">Комфорт — 7 200 ₸ / день</option><option value="3">Премиум — 15 000 ₸ / день</option></select></label>
             <label>Срок, дней<input name="days" type="number" min="1" max="365" value="2" required></label>
-            <label class="check-row"><input name="urgent" type="checkbox"><span>Срочное обслуживание (+1 000 ₽)</span></label>
+            <label class="check-row"><input name="urgent" type="checkbox"><span>Срочное обслуживание (+6 000 ₸)</span></label>
             <button class="button button-primary form-submit" type="submit">Рассчитать стоимость <span>→</span></button>
             <div class="result-box" id="service-result" aria-live="polite" hidden></div>
           </form>
@@ -179,12 +179,12 @@
         <div class="content-grid">
           <form class="panel form-panel" id="finance-form">
             <div class="panel-heading"><span class="panel-icon mint-icon">↗</span><div><h2>Твой бюджет</h2><p>Укажи доходы и ежемесячные расходы.</p></div></div>
-            <label>Ежемесячный доход, ₽<input name="income" type="number" min="0" max="100000000" value="80000" required></label>
-            <label>Ежемесячные расходы, ₽<input name="expenses" type="number" min="0" max="100000000" value="50000" required></label>
+            <label>Ежемесячный доход, ₸<input name="income" type="number" min="0" max="100000000" value="480000" required></label>
+            <label>Ежемесячные расходы, ₸<input name="expenses" type="number" min="0" max="100000000" value="300000" required></label>
             <button class="button button-primary form-submit" type="submit">Анализировать финансы <span>→</span></button>
             <div class="result-box" id="finance-result" aria-live="polite" hidden></div>
           </form>
-          <aside class="panel finance-note"><div class="finance-illustration">₽</div><div class="eyebrow dark-eyebrow">ФИНАНСОВАЯ ПОДСКАЗКА</div><h2>Покупка без<br>сюрпризов</h2><p>Система сравнит доход и расходы и покажет один из трёх статусов финансового состояния.</p><div class="finance-rule"><span>Доходы − расходы</span><b>= запас средств</b></div></aside>
+          <aside class="panel finance-note"><div class="finance-illustration">₸</div><div class="eyebrow dark-eyebrow">ФИНАНСОВАЯ ПОДСКАЗКА</div><h2>Покупка без<br>сюрпризов</h2><p>Система сравнит доход и расходы и покажет один из трёх статусов финансового состояния.</p><div class="finance-rule"><span>Доходы − расходы</span><b>= запас средств</b></div></aside>
         </div>
       </section>
 
@@ -196,7 +196,7 @@
             <label>Неудачные попытки входа<input name="attempts" type="number" min="0" max="10" value="0" required></label>
             <label class="check-row"><input name="newDevice" type="checkbox"><span>Вход с нового устройства</span></label>
             <label class="check-row"><input name="location" type="checkbox"><span>Подозрительное местоположение</span></label>
-            <label>Сумма заказа, ₽<input name="amount" type="number" min="0" max="10000000" value="50000" required></label>
+            <label>Сумма заказа, ₸<input name="amount" type="number" min="0" max="10000000" value="300000" required></label>
             <button class="button button-primary form-submit" type="submit">Оценить риск <span>→</span></button>
             <div class="result-box" id="security-result" aria-live="polite" hidden></div>
           </form>
