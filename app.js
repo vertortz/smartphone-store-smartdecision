@@ -13,21 +13,34 @@ const reportEntries = [];
 const viewTitles = {
   home: "Главная",
   catalog: "Каталог",
+  content: "Статьи и видео",
   purchase: "Покупка и скидки",
   recommend: "Подбор смартфона",
   services: "Услуги",
   account: "Аккаунт и доступ",
+  admin: "Админ-панель",
   finances: "Финансы",
   security: "Безопасность",
   report: "Мой отчёт"
 };
+const postsStorageKey = "smartspace-posts";
+const postTypeLabels = { article: "Статья", photo: "Фото", video: "Видео", ad: "Реклама" };
 const numberFormat = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
 const tenge = (value) => `${numberFormat.format(value)} ₸`;
 const one = (selector, root = document) => root.querySelector(selector);
 const all = (selector, root = document) => [...root.querySelectorAll(selector)];
+let posts = [];
+let isAdminAuthenticated = false;
+let editingPostId = null;
+let postsLoadError = "";
 
 function showView(name) {
   if (!viewTitles[name]) return;
+  if (name === "admin" && !isAdminAuthenticated) {
+    showView("account");
+    showResult("#login-result", "Для доступа к админ-панели войдите под демо-аккаунтом администратора.", "warning");
+    return;
+  }
   all(".view").forEach((view) => view.classList.toggle("active", view.id === `view-${name}`));
   all(".nav-link").forEach((link) => link.classList.toggle("active", link.dataset.view === name));
   one("#page-title").textContent = viewTitles[name];
@@ -85,6 +98,184 @@ function showResult(selector, text, tone = "success") {
 
 function field(form, name) {
   return form.elements.namedItem(name);
+}
+
+function isValidPost(post) {
+  const validFields = post && typeof post.id === "string"
+    && ["article", "photo", "video", "ad"].includes(post.type)
+    && typeof post.title === "string" && typeof post.text === "string"
+    && typeof post.mediaUrl === "string" && typeof post.featured === "boolean"
+    && typeof post.createdAt === "string";
+  if (!validFields || !post.mediaUrl) return Boolean(validFields);
+  try {
+    const url = new URL(post.mediaUrl);
+    return ["http:", "https:"].includes(url.protocol);
+  } catch {
+    return false;
+  }
+}
+
+function readPosts() {
+  try {
+    const stored = window.localStorage.getItem(postsStorageKey);
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) throw new Error("Ожидался список публикаций.");
+    const validPosts = parsed.filter(isValidPost);
+    if (validPosts.length !== parsed.length) {
+      postsLoadError = "Некоторые сохранённые публикации повреждены и не были загружены.";
+    }
+    return validPosts;
+  } catch (error) {
+    postsLoadError = "Не удалось прочитать публикации из хранилища браузера.";
+    console.error(postsLoadError, error);
+    return [];
+  }
+}
+
+function savePosts(nextPosts) {
+  try {
+    window.localStorage.setItem(postsStorageKey, JSON.stringify(nextPosts));
+    posts = nextPosts;
+    postsLoadError = "";
+    return true;
+  } catch (error) {
+    console.error("Не удалось сохранить публикации.", error);
+    showResult("#admin-message", "Не удалось сохранить изменения. Проверьте доступность хранилища браузера.", "danger");
+    return false;
+  }
+}
+
+function createPostCard(post, adminMode = false) {
+  const card = document.createElement("article");
+  card.className = `content-card${post.featured ? " content-card-featured" : ""}`;
+  const type = document.createElement("span");
+  type.className = "content-type";
+  type.textContent = post.featured ? "Рекламный пост" : postTypeLabels[post.type];
+  card.append(type);
+
+  if (post.mediaUrl) {
+    const url = new URL(post.mediaUrl);
+    if (/\.(avif|gif|jpe?g|png|webp)$/i.test(url.pathname)) {
+      const image = document.createElement("img");
+      image.className = "content-media";
+      image.src = url.href;
+      image.alt = post.title;
+      image.loading = "lazy";
+      card.append(image);
+    } else if (/\.(mp4|ogg|webm)$/i.test(url.pathname)) {
+      const video = document.createElement("video");
+      video.className = "content-media";
+      video.controls = true;
+      video.preload = "metadata";
+      const source = document.createElement("source");
+      source.src = url.href;
+      video.append(source);
+      card.append(video);
+    } else {
+      const mediaLink = document.createElement("a");
+      mediaLink.className = "content-media-link";
+      mediaLink.href = url.href;
+      mediaLink.target = "_blank";
+      mediaLink.rel = "noopener noreferrer";
+      mediaLink.textContent = post.type === "video" ? "Смотреть видео ↗" : "Открыть материал ↗";
+      card.append(mediaLink);
+    }
+  }
+
+  const title = document.createElement("h2");
+  title.textContent = post.title;
+  const text = document.createElement("p");
+  text.className = "content-card-text";
+  text.textContent = post.text;
+  const date = document.createElement("time");
+  date.className = "content-card-date";
+  const createdAt = new Date(post.createdAt);
+  date.dateTime = Number.isNaN(createdAt.getTime()) ? "" : createdAt.toISOString();
+  date.textContent = Number.isNaN(createdAt.getTime())
+    ? "Дата не указана"
+    : new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium" }).format(createdAt);
+  card.append(title, text, date);
+
+  if (adminMode) {
+    const actions = document.createElement("div");
+    actions.className = "content-card-actions";
+    const edit = document.createElement("button");
+    edit.className = "button button-outline";
+    edit.type = "button";
+    edit.textContent = "Изменить";
+    edit.addEventListener("click", () => editPost(post));
+    const remove = document.createElement("button");
+    remove.className = "button button-outline";
+    remove.type = "button";
+    remove.textContent = "Удалить";
+    remove.addEventListener("click", () => deletePost(post.id));
+    actions.append(edit, remove);
+    card.append(actions);
+  }
+  return card;
+}
+
+function renderPosts() {
+  const feed = one("#content-posts");
+  const empty = one("#content-empty");
+  const adminList = one("#admin-posts");
+  feed.replaceChildren();
+  adminList.replaceChildren();
+  empty.hidden = posts.length > 0;
+  posts.forEach((post) => {
+    feed.append(createPostCard(post));
+    adminList.append(createPostCard(post, true));
+  });
+  one("#admin-post-count").textContent = `${posts.length} ${posts.length === 1 ? "материал" : posts.length > 1 && posts.length < 5 ? "материала" : "материалов"}`;
+
+  const adSlot = one("#home-ad");
+  adSlot.replaceChildren();
+  const featuredPost = posts.find((post) => post.featured);
+  adSlot.hidden = !featuredPost;
+  if (featuredPost) {
+    const label = document.createElement("div");
+    label.className = "ad-slot-label";
+    label.textContent = "Рекламная публикация";
+    adSlot.append(label, createPostCard(featuredPost));
+    const readMore = document.createElement("button");
+    readMore.className = "text-link";
+    readMore.type = "button";
+    readMore.textContent = "Все статьи и публикации →";
+    readMore.addEventListener("click", () => showView("content"));
+    adSlot.append(readMore);
+  }
+}
+
+function resetPostForm() {
+  one("#post-form").reset();
+  editingPostId = null;
+  one("#post-form-title").textContent = "Новая публикация";
+  one("#publish-post").textContent = "Опубликовать";
+  one("#cancel-edit").hidden = true;
+}
+
+function editPost(post) {
+  const form = one("#post-form");
+  field(form, "type").value = post.type;
+  field(form, "title").value = post.title;
+  field(form, "text").value = post.text;
+  field(form, "mediaUrl").value = post.mediaUrl;
+  field(form, "featured").checked = post.featured;
+  editingPostId = post.id;
+  one("#post-form-title").textContent = "Редактирование публикации";
+  one("#publish-post").textContent = "Сохранить изменения";
+  one("#cancel-edit").hidden = false;
+  form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function deletePost(id) {
+  if (!window.confirm("Удалить эту публикацию?")) return;
+  const nextPosts = posts.filter((post) => post.id !== id);
+  if (savePosts(nextPosts)) {
+    renderPosts();
+    showResult("#admin-message", "Публикация удалена.", "success");
+  }
 }
 
 function phoneCard(product) {
@@ -290,10 +481,83 @@ one("#login-form").addEventListener("submit", (event) => {
   const valid = field(form, "login").value.trim() === "smart"
     && field(form, "password").value === "phone2026";
   const result = valid
-    ? "Доступ открыт. Это учебная демонстрация входа."
+    ? "Доступ администратора открыт. Вы можете управлять публикациями."
     : "Предупреждение: неверный логин или пароль. Доступ не предоставлен.";
+  isAdminAuthenticated = valid;
+  one("#admin-nav").hidden = !valid;
+  one("#open-admin").hidden = !valid;
   showResult("#login-result", result, valid ? "success" : "danger");
   addReport("Проверка доступа", result);
+  if (valid) {
+    showView("admin");
+    if (postsLoadError) showResult("#admin-message", postsLoadError, "warning");
+    else showResult("#admin-message", "Вы вошли. Создайте публикацию с помощью формы.", "success");
+  } else if (one("#view-admin").classList.contains("active")) {
+    showView("account");
+  }
+});
+
+one("#open-admin").addEventListener("click", () => showView("admin"));
+
+one("#post-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (!isAdminAuthenticated) {
+    showView("account");
+    showResult("#login-result", "Сначала войдите под демо-аккаунтом администратора.", "warning");
+    return;
+  }
+  const form = event.currentTarget;
+  const type = field(form, "type").value;
+  const title = field(form, "title").value.trim();
+  const text = field(form, "text").value.trim();
+  let mediaUrl = field(form, "mediaUrl").value.trim();
+  if ((type === "photo" || type === "video") && !mediaUrl) {
+    showResult("#admin-message", "Для публикации фото или видео укажите ссылку на медиафайл.", "warning");
+    return;
+  }
+  if (mediaUrl) {
+    try {
+      const parsedUrl = new URL(mediaUrl);
+      if (!["http:", "https:"].includes(parsedUrl.protocol)) throw new Error("Недопустимый протокол ссылки.");
+      mediaUrl = parsedUrl.href;
+    } catch {
+      showResult("#admin-message", "Укажите корректную ссылку, начинающуюся с http:// или https://.", "danger");
+      return;
+    }
+  }
+  const existingPost = posts.find((post) => post.id === editingPostId);
+  const post = {
+    id: editingPostId || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    type,
+    title,
+    text,
+    mediaUrl,
+    featured: field(form, "featured").checked,
+    createdAt: existingPost ? existingPost.createdAt : new Date().toISOString()
+  };
+  const wasEditing = Boolean(editingPostId);
+  const updatedPosts = editingPostId
+    ? posts.map((item) => item.id === editingPostId ? post : item)
+    : [post, ...posts];
+  const nextPosts = post.featured
+    ? updatedPosts.map((item) => item.id === post.id ? item : { ...item, featured: false })
+    : updatedPosts;
+  if (savePosts(nextPosts)) {
+    resetPostForm();
+    renderPosts();
+    showResult("#admin-message", wasEditing ? "Изменения сохранены." : "Публикация добавлена.", "success");
+  }
+});
+
+one("#cancel-edit").addEventListener("click", resetPostForm);
+
+one("#admin-logout").addEventListener("click", () => {
+  isAdminAuthenticated = false;
+  one("#admin-nav").hidden = true;
+  one("#open-admin").hidden = true;
+  one("#login-form").reset();
+  showView("account");
+  showResult("#login-result", "Вы вышли из админ-панели.", "success");
 });
 
 one("#status-form").addEventListener("submit", (event) => {
@@ -348,4 +612,6 @@ one("#clear-report").addEventListener("click", () => {
 });
 
 renderProducts();
+posts = readPosts();
+renderPosts();
 renderReport();

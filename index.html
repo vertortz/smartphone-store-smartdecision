@@ -22,11 +22,13 @@
         <button class="nav-link" data-view="purchase"><span class="nav-icon">▤</span>Покупка и скидки</button>
         <button class="nav-link" data-view="recommend"><span class="nav-icon">✳</span>Подбор смартфона</button>
         <button class="nav-link" data-view="services"><span class="nav-icon">◈</span>Услуги</button>
+        <button class="nav-link" data-view="content"><span class="nav-icon">▤</span>Статьи и видео</button>
         <div class="sidebar-caption nav-caption">ИНСТРУМЕНТЫ</div>
         <button class="nav-link" data-view="account"><span class="nav-icon">◎</span>Аккаунт и доступ</button>
         <button class="nav-link" data-view="finances"><span class="nav-icon">↗</span>Финансы</button>
         <button class="nav-link" data-view="security"><span class="nav-icon">⌑</span>Безопасность</button>
         <button class="nav-link" data-view="report"><span class="nav-icon">▧</span>Мой отчёт <span class="report-count" id="report-count">0</span></button>
+        <button class="nav-link" id="admin-nav" data-view="admin" hidden><span class="nav-icon">✎</span>Админ-панель</button>
       </nav>
       <div class="sidebar-bottom">
         <div class="support-icon">?</div>
@@ -67,6 +69,8 @@
           <div class="hero-decoration">SMART<br>CHOICE</div>
         </div>
 
+        <section class="ad-slot" id="home-ad" aria-label="Рекламная публикация" hidden></section>
+
         <div class="section-heading">
           <div><div class="eyebrow dark-eyebrow">НАШ ВЫБОР</div><h2>Популярные модели</h2></div>
           <button class="text-link" data-view="catalog">Весь каталог <span>→</span></button>
@@ -92,6 +96,12 @@
           <article class="category-card"><span>↔</span><h3>Обмен устройства</h3><p>Оценим старый смартфон и зачтём стоимость при покупке.</p></article>
           <article class="category-card"><span>✧</span><h3>Настройка</h3><p>Перенос данных, приложения и помощь специалиста.</p></article>
         </div>
+      </section>
+
+      <section class="view" id="view-content">
+        <div class="page-intro"><div class="eyebrow dark-eyebrow">НОВОСТИ И ПОЛЕЗНОЕ</div><h1>Статьи, фото и видео</h1><p>Публикации о смартфонах, обзоры и специальные предложения.</p></div>
+        <div class="content-posts" id="content-posts"></div>
+        <div class="report-empty" id="content-empty">Пока публикаций нет. Загляните позже!</div>
       </section>
 
       <section class="view" id="view-purchase">
@@ -161,9 +171,10 @@
             <div class="panel-heading"><span class="panel-icon purple-icon">◎</span><div><h2>Вход в систему</h2><p>Для демонстрации проекта используйте данные ниже.</p></div></div>
             <label>Логин<input name="login" autocomplete="username" placeholder="Введите логин" required></label>
             <label>Пароль<input name="password" type="password" autocomplete="current-password" placeholder="Введите пароль" required></label>
-            <div class="demo-hint">Демо-логин: <b>smart</b> · пароль: <b>phone2026</b></div>
+            <div class="demo-hint">Демо-администратор: <b>smart</b> · пароль: <b>phone2026</b></div>
             <button class="button button-primary form-submit" type="submit">Войти <span>→</span></button>
             <div class="result-box" id="login-result" aria-live="polite" hidden></div>
+            <button class="button button-outline" id="open-admin" type="button" hidden>Открыть админ-панель</button>
           </form>
           <form class="panel form-panel" id="status-form">
             <div class="panel-heading"><span class="panel-icon peach-icon">◉</span><div><h2>Статус аккаунта</h2><p>Проверь, разрешён ли доступ к функциям магазина.</p></div></div>
@@ -171,6 +182,29 @@
             <button class="button button-primary form-submit" type="submit">Проверить статус <span>→</span></button>
             <div class="result-box" id="status-result" aria-live="polite" hidden></div>
           </form>
+        </div>
+      </section>
+
+      <section class="view" id="view-admin">
+        <div class="page-intro"><div class="eyebrow dark-eyebrow">УПРАВЛЕНИЕ САЙТОМ</div><h1>Админ-панель</h1><p>Создавайте статьи, фото- и видеопубликации, а также рекламные посты.</p></div>
+        <div class="admin-demo-note">Демо-режим: данные сохраняются только в этом браузере. Для настоящего сайта нужны сервер и защищённая авторизация.</div>
+        <div class="content-grid admin-layout">
+          <form class="panel form-panel" id="post-form">
+            <div class="panel-heading"><span class="panel-icon purple-icon">✎</span><div><h2 id="post-form-title">Новая публикация</h2><p>Поля с URL необязательны для обычной статьи.</p></div></div>
+            <label>Тип публикации<select name="type"><option value="article">Статья</option><option value="photo">Фото</option><option value="video">Видео</option><option value="ad">Рекламный пост</option></select></label>
+            <label>Заголовок<input name="title" maxlength="100" placeholder="Например, как выбрать смартфон" required></label>
+            <label>Текст публикации<textarea name="text" rows="5" maxlength="1200" placeholder="Краткое описание или текст статьи" required></textarea></label>
+            <label>Ссылка на фото или видео<input name="mediaUrl" type="url" placeholder="https://example.com/media.jpg"></label>
+            <label class="check-row"><input name="featured" type="checkbox"><span>Показывать на главной как рекламный пост</span></label>
+            <button class="button button-primary form-submit" id="publish-post" type="submit">Опубликовать <span>→</span></button>
+            <button class="button button-outline" id="cancel-edit" type="button" hidden>Отменить редактирование</button>
+            <div class="result-box" id="admin-message" aria-live="polite" hidden></div>
+          </form>
+          <aside class="panel admin-side">
+            <div class="panel-heading"><span class="panel-icon mint-icon">▤</span><div><h2>Публикации</h2><p id="admin-post-count">0 материалов</p></div></div>
+            <div class="admin-posts" id="admin-posts"></div>
+            <button class="button button-outline admin-logout" id="admin-logout" type="button">Выйти из админ-панели</button>
+          </aside>
         </div>
       </section>
 
